@@ -1,0 +1,17 @@
+{
+  "name": "ethnet",
+  "version": "1.0.0",
+  "description": "Script for setting up ethereum net by config",
+  "main": "ethNetSetup.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "child_process": "^1.0.2",
+    "commander": "^2.18.0",
+    "web3": "^1.0.0-beta.36"
+  }
+}
