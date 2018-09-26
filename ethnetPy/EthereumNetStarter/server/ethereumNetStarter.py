@@ -89,7 +89,7 @@ def start(args):
         node_id = rpc_port
         node_name = "node_{}".format(node_id)
 
-        node_path = "{}/".format(node_name)
+        node_path = "nodes/{}/".format(node_name)
         if os.path.exists(node_path):
             shutil.rmtree(node_path, ignore_errors=True)
         os.makedirs(node_path)
@@ -114,6 +114,7 @@ def start(args):
 
     printcol("Started {} eth nodes".format(len(nodes_data)))
     print(json.dumps(nodes_data).replace("\"","\\\""))
+    return nodes_data
 
 
 def stop(args):
@@ -124,7 +125,7 @@ def stop(args):
     printcol("Stopping nodes Done")
 
 def stop_all(args):
-    printcol("Stopping add geth nodes")
+    printcol("Stopping all geth nodes")
     pids = getpid("geth")
     for pid in pids:
         cmd("kill {}".format(pid))

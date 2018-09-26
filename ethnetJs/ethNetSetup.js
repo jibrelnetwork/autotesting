@@ -79,7 +79,7 @@ let start = (options)  => {
  //    	stdio: 'ignore', // piping all stdio to /dev/null
  //    	detached: true
 	// }).unref();
-    // if (options.all) params.push("a");
+    // if (options.all) params.push("a");90;
     // if (options.long) params.push("l");
     // let parameterizedCommand = params.length 
     //                             ? cmd + ' -' + params.join('') 
