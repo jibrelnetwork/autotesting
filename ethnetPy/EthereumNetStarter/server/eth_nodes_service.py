@@ -53,7 +53,7 @@ def post_start():
     tasks[task_id] = {"status": "posted", "config": content}
     p = Process(target=statingEthNetTask, args=(task_id, ""))
     p.start()
-    return "Task posted with id:{}".format(task_id)
+    return json.dumps({"task_id":task_id})
 
 @app.route('/status', methods=['GET'])
 def get_status():
