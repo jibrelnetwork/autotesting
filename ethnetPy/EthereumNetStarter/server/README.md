@@ -12,4 +12,5 @@ Run client tests
 
 ```
 python clienttest.py
+ps -ef | grep geth
 ```
