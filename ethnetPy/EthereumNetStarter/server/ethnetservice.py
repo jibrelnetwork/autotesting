@@ -1,14 +1,14 @@
 import sys
 sys.path.append('/usr/local/lib/python3.6/site-packages')
 
+from multiprocessing import Process, Manager
+from collections import namedtuple
 from flask import Flask
 from flask import request
-import time
-from multiprocessing import Process, Manager
+import ethnetstarter
 import subprocess
-import ethereumNetStarter
-from collections import namedtuple
 import json
+import time
 
 app = Flask(__name__)
 
@@ -18,7 +18,7 @@ tasks = manager.dict()
 def cmd(cmd_str):
     return subprocess.Popen(cmd_str.split(' '), stdout=subprocess.PIPE).communicate()[0]
 
-def statingEthNetTask(task_id, l):
+def stating_eth_net_task(task_id, l):
     print("started:{}".format(task_id))
     task = tasks[task_id]
     task["status"] = "in progress"
@@ -27,8 +27,7 @@ def statingEthNetTask(task_id, l):
     Args = namedtuple("Args", "config nodes")
 
     args = Args(config=json.dumps(task["config"]), nodes={})
-    res = ethereumNetStarter.start(args)
-    # cmd("python ethereumNetStarter.py start -c \"{}\"".format(task["config"]))
+    res = ethnetstarter.start(args)
 
 
     task = tasks[task_id]
@@ -38,7 +37,7 @@ def statingEthNetTask(task_id, l):
     print("done:{}".format(task_id))
 
 def stop_all(a, b):
-    ethereumNetStarter.stop_all({})
+    ethnetstarter.stop_all({})
 
 @app.route('/')
 def index():
@@ -51,7 +50,7 @@ def post_start():
     content = request.get_json()
     content["task_id"] = task_id
     tasks[task_id] = {"status": "posted", "config": content}
-    p = Process(target=statingEthNetTask, args=(task_id, ""))
+    p = Process(target=stating_eth_net_task, args=(task_id, ""))
     p.start()
     return json.dumps({"task_id":task_id})
 
@@ -68,4 +67,4 @@ def get_stop_all():
     return 'Start stopping all nodes'
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
