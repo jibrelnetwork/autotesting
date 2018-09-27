@@ -29,7 +29,6 @@ def stating_eth_net_task(task_id, l):
     args = Args(config=json.dumps(task["config"]), nodes={})
     res = ethnetstarter.start(args)
 
-
     task = tasks[task_id]
     task["res"] = res
     task["status"] = "done"
