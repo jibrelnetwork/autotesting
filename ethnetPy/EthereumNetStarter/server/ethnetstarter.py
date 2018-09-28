@@ -129,7 +129,7 @@ def help(args):
     printerr("Use -h")
 
 
-def parse_args():
+def parse_args(args):
     parser = argparse.ArgumentParser(description=
                                      "eth nodes configurator"
                                      "use web3 stable"
@@ -152,11 +152,11 @@ def parse_args():
 
     parser.set_defaults(func=help)
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
     return args
 
-def main():
-    args = parse_args()
+def main(args):
+    args = parse_args(args)
     try:
         args.func(args)
 
@@ -164,4 +164,5 @@ def main():
         print(e)
 
 if __name__ == '__main__':
-    main()
+    import sys
+    main(sys.argv[1:])
