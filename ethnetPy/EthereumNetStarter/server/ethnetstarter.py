@@ -1,6 +1,6 @@
-# eth nodes configurator
+# eth nodes starter
+# starts geth nodes by configuration
 
-# from web3 import Web3, HTTPProvider, IPCProvider, WebsocketProvider
 import argparse
 import subprocess
 import os
@@ -9,40 +9,11 @@ import shutil
 import socket
 import time
 
-localhost = "127.0.0.1"
-
-config = '''
-{
-  "nodes": [
-    {
-      "id": 1
-    },
-    {
-      "id": 2
-    },
-    {
-      "id": 3
-    }
-  ],
-  "genesis": 
-{
-    "nonce": "0x0000000000000042",
-    "timestamp": "0x0",
-    "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-    "extraData": "0x00",
-    "gasLimit": "0x8000000",
-    "difficulty": "0x400",
-    "mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-    "coinbase": "0x3333333333333333333333333333333333333333",
-    "alloc": {
-    },
-    "config": { }
-}
-}
-'''
-
 def printcol(str):
     print('\x1b[6;30;42m' + str + '\x1b[0m')
+
+def printerr(str):
+    print('\x1b[6;30;31m' + str + '\x1b[0m')
 
 def cmd(cmd_str):
     return subprocess.Popen(cmd_str.split(' '), stdout=subprocess.PIPE).communicate()[0]
@@ -65,11 +36,31 @@ def unopened_ports_scan(ip, starting_port, count):
     return unopened_ports
 
 def getpid(process_name):
-    return [item.split()[1] for item in os.popen('ps -ef | grep geth').read().splitlines()[1:] if process_name in item.split()]
+    return [item.split()[0] for item in os.popen('ps -A | grep geth').read().splitlines()[0:] if process_name in item.split()]
 
 
 def start(args):
-    config = json.loads(args.config)
+
+    config = None
+    if args.config:
+        printcol("Using --config")
+        config = json.loads(args.config)
+    else:
+        if args.config_path:
+            printcol("Using --config_path {}".format(args.config_path))
+            config_path = args.config_path
+            if os.path.exists(config_path):
+                with open(config_path, 'r') as file:
+                    data = file.read().replace('\n', ' ')
+                    file.close()
+                config = json.loads(data)
+            else:
+                printerr("Wrong config_path:{}".format(config_path))
+                exit(1)
+        else:
+            printerr("Need provide at least one of params: --config, --config_path")
+            exit(2)
+
     nodes_data = config['nodes']
 
     for i in range(len(nodes_data)):
@@ -77,9 +68,10 @@ def start(args):
         printcol("Init node {}".format(i))
         print(json.dumps(args.config))
 
-        node_port = unopened_ports_scan(localhost, 30301, 1)[0]
-        rpc_ip = localhost
-        rpc_port = unopened_ports_scan(localhost, 8545, 1)[0]
+        rpc_ip = args.rpc_ip
+        node_port = unopened_ports_scan(rpc_ip, args.port, 1)[0]
+        rpc_port = unopened_ports_scan(rpc_ip, args.rpc_port, 1)[0]
+        rpc_api = nodes_data[i]["rpc_api"]
 
         nodes_data[i]["rpc_ip"] = rpc_ip
         nodes_data[i]["rpc_port"] = rpc_port
@@ -102,8 +94,8 @@ def start(args):
         cmd("geth --datadir {} init {}".format(node_path, genesis_path))
 
         printcol("Starting eth node {}".format(i))
-        start_cmd = "geth --datadir {} --port {} --rpc --rpcport {} --rpcaddr {} --rpcapi=\'db,eth,net,web3,personal\'".format(node_path, node_port, rpc_port, rpc_ip)
-        geth_process = subprocess.Popen(start_cmd.split(' ')) #, stdout=subprocess.PIPE)
+        start_cmd = "geth --datadir {} --port {} --rpc --rpcport {} --rpcaddr {} --rpcapi=\'{}\'".format(node_path, node_port, rpc_port, rpc_ip, rpc_api)
+        geth_process = subprocess.Popen(start_cmd.split(' '))
 
         nodes_data[i]["node_pid"] = geth_process.pid
         time.sleep(5)
@@ -111,8 +103,11 @@ def start(args):
         printcol("Starting eth node {} done".format(i))
         print("Use: web3 = Web3(Web3.HTTPProvider(\"http://{}:{}\"))".format(rpc_ip, rpc_port))
 
-    printcol("Started {} eth nodes".format(len(nodes_data)))
-    print(json.dumps(nodes_data).replace("\"","\\\""))
+    printcol("Geth nodes addresses:")
+    print(json.dumps(nodes_data).replace("\"", "\\\""))
+
+    printcol("Started {} geth nodes DONE".format(len(nodes_data)))
+
     return nodes_data
 
 
@@ -130,6 +125,9 @@ def stop_all(args):
         cmd("kill {}".format(pid))
     printcol("Stopping nodes Done")
 
+def help(args):
+    printerr("Use -h")
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description=
@@ -138,35 +136,32 @@ def parse_args():
                                      )
     subparsers = parser.add_subparsers()
     parser_start = subparsers.add_parser('start', help='Start eth node')
-    parser_start.add_argument('-c', '--config', action='store', default=config, help='Node configuration json string')
-    parser_start.add_argument('-p', '--port', default='30301', help='Node port')
+    parser_start.add_argument('-c', '--config', action='store', help='Node configuration json string')
+    parser_start.add_argument('-f', '--config_path', default='./genesis.json', action='store', help='Node configuration json file path')
+    parser_start.add_argument('-p', '--port', default=30301, help='Node port')
     parser_start.add_argument('-i', '--rpc_ip', default='127.0.0.1', help='Node rpc ip address')
-    parser_start.add_argument('-r', '--rpc_port', default='8545', help='RPC node port')
-    # parser_start.add_argument('-c', '--passcode', default='123', help='Miner account passcode')
+    parser_start.add_argument('-r', '--rpc_port', default=8545, help='RPC node port')
     parser_start.set_defaults(func=start)
 
-    parser_stop = subparsers.add_parser('stop', help='Stop eth node')
+    parser_stop = subparsers.add_parser('stop', help='Stop eth nodes')
     parser_stop.add_argument('-n', '--nodes', default='[{}]', help='Nodes to stop json string')
     parser_stop.set_defaults(func=stop)
 
-    parser_stop_all = subparsers.add_parser('stopall', help='Stop all eth node')
+    parser_stop_all = subparsers.add_parser('stopall', help='Stop all eth nodes')
     parser_stop_all.set_defaults(func=stop_all)
+
+    parser.set_defaults(func=help)
 
     args = parser.parse_args()
     return args
 
-
 def main():
     args = parse_args()
     try:
-        # print("args:", args)
         args.func(args)
-
-
 
     except Exception as e:
         print(e)
-
 
 if __name__ == '__main__':
     main()

@@ -5,13 +5,16 @@ import unittest
 config_data = {
   'nodes': [
     {
-      'id': 1
+      'id': 1,
+      'rpc_api':'db,eth,net,web3,personal'
     },
     {
-      'id': 2
+      'id': 2,
+      'rpc_api':'db,eth,net,web3,personal'
     },
     {
-      'id': 3
+      'id': 3,
+      'rpc_api':'db,eth,net,web3,personal'
     }
   ],
   'genesis':
