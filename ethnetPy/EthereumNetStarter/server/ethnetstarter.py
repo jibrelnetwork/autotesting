@@ -36,7 +36,7 @@ def unopened_ports_scan(ip, starting_port, count):
     return unopened_ports
 
 def getpid(process_name):
-    return [item.split()[0] for item in os.popen('ps -A | grep geth').read().splitlines()[0:] if process_name in item.split()]
+    return [item.split()[0] for item in os.popen('ps -A | grep {}'.format(process_name)).read().splitlines()[0:] if process_name in item.split()]
 
 
 def start(args):
@@ -137,7 +137,7 @@ def parse_args(args):
     subparsers = parser.add_subparsers()
     parser_start = subparsers.add_parser('start', help='Start eth node')
     parser_start.add_argument('-c', '--config', action='store', help='Node configuration json string')
-    parser_start.add_argument('-f', '--config_path', default='./genesis.json', action='store', help='Node configuration json file path')
+    parser_start.add_argument('-f', '--config_path', default='./config.json', action='store', help='Node configuration json file path')
     parser_start.add_argument('-p', '--port', default=30301, help='Node port')
     parser_start.add_argument('-i', '--rpc_ip', default='127.0.0.1', help='Node rpc ip address')
     parser_start.add_argument('-r', '--rpc_port', default=8545, help='RPC node port')
@@ -158,7 +158,7 @@ def parse_args(args):
 def main(args):
     args = parse_args(args)
     try:
-        args.func(args)
+        return args.func(args)
 
     except Exception as e:
         print(e)

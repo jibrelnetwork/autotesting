@@ -24,16 +24,31 @@ def stating_eth_net_task(task_id, l):
     task["status"] = "in progress"
     tasks[task_id] = task
 
-    Args = namedtuple("Args", "config nodes")
-
-    args = Args(config=json.dumps(task["config"]), nodes={})
-    res = ethnetstarter.main(["start"]) #ethnetstarter.main("start") # start(args)
+    # res = ethnetstarter.main(["start"])
+    config = task["config"]
+    params = ["start", "-c", "{}".format(json.dumps(config))]
+    args = ethnetstarter.parse_args(params)
+    res = None
+    try:
+        res = args.func(args)
+    except Exception as e:
+        print(e)
 
     task = tasks[task_id]
     task["res"] = res
     task["status"] = "done"
     tasks[task_id] = task
     print("done:{}".format(task_id))
+
+def stop_eth_net_task(nodes, l):
+    print("Nodes to stop:{}".format(nodes))
+    args = ["stop", "-n", "{}".format(json.dumps(nodes))]
+    args = ethnetstarter.parse_args(args)
+    try:
+        args.func(args)
+    except Exception as e:
+        print(e)
+    print("done")
 
 def stop_all(a, b):
     ethnetstarter.stop_all({})
@@ -58,6 +73,13 @@ def get_status():
     task_id = request.args.get("task_id")
     task = tasks.get(task_id)
     return json.dumps(task)
+
+@app.route('/stop', methods=['POST'])
+def post_stop():
+    content = request.get_json()
+    p = Process(target=stop_eth_net_task, args=(content, ""))
+    p.start()
+    return "stopping nodes:{}".format(json.dumps(content))
 
 @app.route('/stopall', methods=['GET'])
 def get_stop_all():
