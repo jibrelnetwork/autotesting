@@ -5,6 +5,7 @@ from multiprocessing import Process, Manager
 from collections import namedtuple
 from flask import Flask
 from flask import request
+from flask import Response
 import ethnetstarter
 import subprocess
 import json
@@ -66,20 +67,32 @@ def post_start():
     tasks[task_id] = {"status": "posted", "config": content}
     p = Process(target=stating_eth_net_task, args=(task_id, ""))
     p.start()
-    return json.dumps({"task_id":task_id})
+    ret = json.dumps({"task_id":task_id})
+    resp = Response(response=ret,
+                    status=200,
+                    mimetype="application/json")
+    return resp
 
 @app.route('/status', methods=['GET'])
 def get_status():
     task_id = request.args.get("task_id")
     task = tasks.get(task_id)
-    return json.dumps(task)
+    ret = json.dumps(task)
+    resp = Response(response=ret,
+                    status=200,
+                    mimetype="application/json")
+    return resp
 
 @app.route('/stop', methods=['POST'])
 def post_stop():
     content = request.get_json()
     p = Process(target=stop_eth_net_task, args=(content, ""))
     p.start()
-    return "stopping nodes:{}".format(json.dumps(content))
+    ret = json.dumps({"stopping nodes":content})
+    resp = Response(response=ret,
+                    status=200,
+                    mimetype="application/json")
+    return resp
 
 @app.route('/stopall', methods=['GET'])
 def get_stop_all():

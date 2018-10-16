@@ -37,7 +37,7 @@ config_data = {
 def getpid(process_name):
     return [item.split()[0] for item in os.popen('ps -A | grep {}'.format(process_name)).read().splitlines()[0:] if process_name in item.split()]
 
-class TestStringMethods(unittest.TestCase):
+class TestEthService(unittest.TestCase):
 
     def test_start(self):
         r = requests.post("http://127.0.0.1:5000/start", json=config_data)

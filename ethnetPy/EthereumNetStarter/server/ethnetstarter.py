@@ -123,6 +123,7 @@ def stop_all(args):
     pids = getpid("geth")
     for pid in pids:
         cmd("kill {}".format(pid))
+    shutil.rmtree("nodes/*", ignore_errors=True)
     printcol("Stopping nodes Done")
 
 def help(args):
