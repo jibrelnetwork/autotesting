@@ -15,6 +15,13 @@ brew install geth
 ```
 
 
+Install requires
+
+```
+pipenv install
+```
+
+
 Run server
 
 ```
