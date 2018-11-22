@@ -18,6 +18,10 @@ brew install geth
 Install requires
 
 ```
+brew install pipenv
+```
+
+```
 pipenv install
 ```
 
