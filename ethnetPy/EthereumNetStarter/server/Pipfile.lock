@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d99bd6e13b173278b5b31022309611c275578426d46751b984b34b7c6f9234af"
+            "sha256": "7ca76f221c77f5afe91e2bc8629b2f6edab654d88dbf6447aa6bc889bb129efd"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -18,10 +18,10 @@
     "default": {
         "certifi": {
             "hashes": [
-                "sha256:376690d6f16d32f9d1fe8932551d80b23e9d393a8578c5633a2ed39a64861638",
-                "sha256:456048c7e371c089d0a77a5212fb37a2c2dce1e24146e3b7e0261736aaeaa22a"
+                "sha256:339dc09518b07e2fa7eda5450740925974815557727d6bd35d319c1524a04a4c",
+                "sha256:6d58c986d22b038c8c0df30d639f23a3e6d172a05c3583e766f4c0b785c0986a"
             ],
-            "version": "==2018.8.24"
+            "version": "==2018.10.15"
         },
         "chardet": {
             "hashes": [
@@ -72,6 +72,14 @@
             ],
             "version": "==1.0"
         },
+        "py-solc": {
+            "hashes": [
+                "sha256:82095bdac661072f48cf2daf8a96bdb625674330d92b225be26043e8d3ef8c9a",
+                "sha256:9ec0bc36ef22a9b0f5642e7846999c4485fa2fa562a61897aeb0a4ca53d60153"
+            ],
+            "index": "pypi",
+            "version": "==3.2.0"
+        },
         "requests": {
             "hashes": [
                 "sha256:63b52e3c866428a224f97cab011de738c36aec0185aa91cfacd418b5d58911d1",
@@ -79,6 +87,20 @@
             ],
             "index": "pypi",
             "version": "==2.19.1"
+        },
+        "save": {
+            "hashes": [
+                "sha256:5b93591b8c0b3e37a715eaaf120eecaf9fd7b8580f45f8d018fefa41bb3eb1eb"
+            ],
+            "index": "pypi",
+            "version": "==0.1"
+        },
+        "semantic-version": {
+            "hashes": [
+                "sha256:2a4328680073e9b243667b201119772aefc5fc63ae32398d6afafff07c4f54c0",
+                "sha256:2d06ab7372034bcb8b54f2205370f4aa0643c133b7e6dbd129c5200b83ab394b"
+            ],
+            "version": "==2.6.0"
         },
         "urllib3": {
             "hashes": [

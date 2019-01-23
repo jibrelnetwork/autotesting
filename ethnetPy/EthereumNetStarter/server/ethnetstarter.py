@@ -167,3 +167,5 @@ def main(args):
 if __name__ == '__main__':
     import sys
     main(sys.argv[1:])
+    tests = ""
+    cmd("xcodebuild test-without-building -scheme jWalletTests -workspace jWallet.xcworkspace -destination \'platform=iOS Simulator,name=iPhone SE,OS=12.0\' -derivedDataPath ./Build -only-testing:{}".format(tests))
