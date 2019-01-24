@@ -1,0 +1,44 @@
+import sys
+sys.path.append('/usr/local/lib/python3.6/site-packages')
+
+from flask import Flask
+from flask import request
+from flask import Response
+from pathlib import Path
+import subprocess
+
+
+app = Flask(__name__)
+
+def cmd(cmd_str):
+    return subprocess.Popen(cmd_str.split(' '), stdout=subprocess.PIPE).communicate()[0]
+
+def resContent(xcresult_path):
+
+    if Path(xcresult_path).exists():
+        index_path = xcresult_path + '/index.html'
+        if not Path(index_path).exists():
+            cmd("xchtmlreport -r {}".format(xcresult_path))
+        return Path(index_path).read_text()
+    else:
+        return "no xcresult"
+
+
+
+@app.route('/')
+def index():
+    link = "http://0.0.0.0:5244/report?xcresult_path=/Users/bogdan/xcode/jibral/testReports/Test-JWTestsUI-2018.12.07_16-07-52-0300.xcresult"
+    return "xcreportService <a href='{}'>Using example</a>".format(link)
+
+@app.route('/report', methods=['GET'])
+def get_status():
+    xcresult_path = request.args.get("xcresult_path")
+    contents = resContent(xcresult_path)
+
+    resp = Response(response=contents,
+                    status=200,
+                    mimetype='text/html')
+    return resp
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5244, debug=False)
