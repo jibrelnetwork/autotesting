@@ -18,7 +18,10 @@ def resContent(xcresult_path):
     if Path(xcresult_path).exists():
         index_path = xcresult_path + '/index.html'
         if not Path(index_path).exists():
-            cmd("xchtmlreport -r {}".format(xcresult_path))
+            command = "xchtmlreport -r {}".format(xcresult_path)
+            print("Report generation: {}".format(command))
+            print(cmd("xchtmlreport -r {}".format(xcresult_path)))
+            print("Report generation done")
         return Path(index_path).read_text()
     else:
         return "no xcresult"
@@ -27,7 +30,8 @@ def resContent(xcresult_path):
 
 @app.route('/')
 def index():
-    link = "http://0.0.0.0:5244/report?xcresult_path=/Users/bogdan/xcode/jibral/testReports/Test-JWTestsUI-2018.12.07_16-07-52-0300.xcresult"
+    # link = "http://0.0.0.0:5244/report?xcresult_path=/Users/bogdan/xcode/jibral/testReports/Test-JWTestsUI-2018.12.07_16-07-52-0300.xcresult"
+    link = "server-mini.local:5244/report?xcresult_path=/Library/Developer/XcodeServer/IntegrationAssets/69a4014569ed0e3c579b0695930de236-JWI-R17%20Sim%20iPhone%206%2012.1/11/xcodebuild_result.xcresult"
     return "xcreportService <a href='{}'>Using example</a>".format(link)
 
 @app.route('/report', methods=['GET'])
