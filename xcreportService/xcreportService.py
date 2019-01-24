@@ -18,9 +18,9 @@ def resContent(xcresult_path):
     if Path(xcresult_path).exists():
         index_path = xcresult_path + '/index.html'
         if not Path(index_path).exists():
-            command = "xchtmlreport -r {}".format(xcresult_path)
+            command = "xchtmlreport -r '{}'".format(xcresult_path)
             print("Report generation: {}".format(command))
-            print(cmd("xchtmlreport -r {}".format(xcresult_path)))
+            print(cmd(command))
             print("Report generation done")
         return Path(index_path).read_text()
     else:
