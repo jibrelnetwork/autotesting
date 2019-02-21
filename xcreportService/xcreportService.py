@@ -34,7 +34,7 @@ def resContent(xcresult_path):
         return "no xcresult on: {}".format(xcresult_path)
 
 @app.route('/1_Test/Attachments/<screenshotPath>')
-def screenshot(screenshotPath):
+def screenshotForReport(screenshotPath):
     #http://0.0.0.0:5244/1_Test/Attachments/Screenshot%20of%20main%20screen%20(ID%201)_1_5BE71AF9-B68E-4A3A-9196-8C20E5AAA0EF.png
     #http://192.168.7.57:5244/1_Test/Attachments/JWI-T84_1_66AD4AAE-E08B-4E8D-8835-67CA6C4A0764.png
     # screenshotPathPart = "{}_{}*".format(screenshotPath.split("_")[0], screenshotPath.split("_")[1])
@@ -49,6 +49,19 @@ def screenshot(screenshotPath):
         return Path(filename).read_bytes()
     else:
         return "No screenshot"
+
+@app.route('/screenshot/<XCS_BOT_ID>/<XCS_BOT_NAME>/<XCS_INTEGRATION_NUMBER>/<SCR_NAME>')
+def screenshot(XCS_BOT_ID, XCS_BOT_NAME, XCS_INTEGRATION_NUMBER, SCR_NAME):
+    # /Library/Developer/XcodeServer/IntegrationAssets/1d3cf83551620b4254fde68e36cbd7ef-Simulator iPhone 6 10.3.1/30/xcodebuild_result.xcresult/1_Test/Attachments
+
+    findPath = '/Library/Developer/XcodeServer/IntegrationAssets/{}-{}/{}/xcodebuild_result.xcresult/1_Test/Attachments/{}*'.format(XCS_BOT_ID, XCS_BOT_NAME, XCS_INTEGRATION_NUMBER, SCR_NAME)
+    for filename in glob.iglob(findPath, recursive=True):
+        if Path(filename).exists():
+            return Path(filename).read_bytes()
+
+    return "No screenshot for: {} {} {} {}".format(XCS_BOT_ID, XCS_BOT_NAME, XCS_INTEGRATION_NUMBER, SCR_NAME)
+
+
 
 @app.route('/')
 def index():
